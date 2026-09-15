@@ -1,34 +1,25 @@
+import { AtomicServiceEnhancedWebController } from '@atomicservice/ascfapi';
 import { authentication } from '@kit.AccountKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-
+import {webContainerPage} from './webContainer';
 const DOMAIN = 0x0000;
 
 @Entry
 @Component
 struct Index {
-  @State message: string = 'Hello World';
-
+  @State controller: AtomicServiceEnhancedWebController = new AtomicServiceEnhancedWebController();
   build() {
     RelativeContainer() {
-      Text(this.message)
-        .id('HelloWorld')
-        .fontSize($r('app.float.page_text_font_size'))
-        .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
-        })
-        .onClick(() => {
-          this.message = 'Welcome';
-        })
+      webContainerPage({
+        controller:this.controller
+      })
     }
     .height('100%')
     .width('100%')
   }
 
   aboutToAppear() {
-    hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
     this.loginWithHuaweiID();
   }
 
@@ -56,7 +47,6 @@ struct Index {
       hilog.error(DOMAIN, 'testTag', 'error: %{public}s', JSON.stringify(error));
       if (error.code === authentication.AuthenticationErrorCode.ACCOUNT_NOT_LOGGED_IN) {
         // HUAWEI ID is not logged in, it is recommended to jump to the login guide page
-
       }
     });
   }
